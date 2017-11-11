@@ -38,6 +38,7 @@ var Tweet = React.createClass({
 		var tweet = this.props.tweet;
 		var onImageClick=this.props.onImageClick;
 		console.log("[snapterest] handleImageClick()");
+		
 		if(onImageClick){
 			onImageClick(tweet);
 		}

@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM= require('react-dom');
 var Application = require('./components/Application.react');
-
+var WebAPIUtils= require('./utils/WebAPIUtils');
 /*
 var ReactClass= React.createClass({
 	
@@ -31,5 +31,6 @@ var ReactClass= React.createClass({
 });
 var reactComponentElement= React.createElement(ReactClass);
 */
+WebAPIUtils.initializeStreamOfTweets();
 ReactDOM.render(<Application />, document.getElementById('react-application'));
 

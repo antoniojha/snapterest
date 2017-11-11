@@ -6,18 +6,21 @@ var Header= require('./Header.react');
 var Button= require('./Button.react');
 var CollectionRenameForm = require('./CollectionRenameForm.react');
 var CollectionExportForm= require('./CollectionExportForm.react');
+var CollectionActionCreators= require('../actions/CollectionActionCreators');
+var CollectionStore=require('../stores/CollectionStore');
 
 var CollectionControls= React.createClass({
 	
 	getInitialState: function(){
 		return{
-			name: 'new',
+		//	name: 'new',
 			isEditingName: false
 		};
 	},
 	getHeaderText: function(){
 		var numberOfTweetsInCollection = this.props.numberOfTweetsInCollection;
 		var text= numberOfTweetsInCollection;
+		var name= CollectionStore.getCollectionName();
 		
 		if(numberOfTweetsInCollection ===1){
 			text= text+ ' tweet in your';
@@ -26,7 +29,7 @@ var CollectionControls= React.createClass({
 		}
 		return(
 			<span>
-				{text} <strong>{this.state.name}</strong> collection
+				{text} <strong>{name}</strong> collection
 			</span>
 		);
 	},
@@ -34,6 +37,10 @@ var CollectionControls= React.createClass({
 		this.setState({
 			isEditingName: !this.state.isEditingName
 		});		
+	},
+	/* new method*/
+	removeALlTweetsFromCollection: function(){
+		CollectionActionCreators.removeAllTweetsFromCollection();
 	},
 	setCollectionName: function(name){
 		this.setState({
@@ -57,7 +64,7 @@ var CollectionControls= React.createClass({
 				
 				<Button label="Rename collection" handleClick={this.toggleEditCollectionName} />
 				
-				<Button label="Empty collection" handleClick={this.props.onRemoveAllTweetsFromCollection}/>
+				<Button label="Empty collection" handleClick={this.props.removeAllTweetsFromCollection}/>
 				
 				<CollectionExportForm htmlMarkup={this.props.htmlMarkup} />
 			</div>

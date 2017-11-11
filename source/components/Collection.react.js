@@ -3,22 +3,39 @@
  */
 var React = require('react');
 var ReactDOMServer= require('react-dom/server');
-
 var CollectionControls= require('./CollectionControls.react');
 var TweetList = require('./TweetList.react');
 var Header = require('./Header.react');
+var CollectionUtils= require('../utils/CollectionUtils');
+var CollectionStore= require('../stores/CollectionStore');
 
 var Collection = React.createClass({
-	
+	/*
 	getListOfTweetIds:function(){
 		return Object.keys(this.props.tweets);
 	},
 	getNumberOfTweetsInCollection: function(){
 		return this.getListOfTweetIds().length;
+	},*/
+	getInitialState: function(){
+		return{
+			collectionTweets: CollectionStore.getCollectionTweets()
+		};
+	},
+	componentDidMount:function(){
+		CollectionStore.addChangeListener(this.onCollectionChange);
+	},
+	componentWillUnMount:function(){
+		CollectionStore.removeChangeListener(this.onCollectionChange);
+	},	
+	onCollectionChange: function(){
+		this.setState({
+			collectionTweets: CollectionStore.getCollectionTweets()
+		});
 	},
 	createHtmlMarkupStringOfTweetList:function(){
 		var htmlString = ReactDOMServer.renderToStaticMarkup(
-			<TweetList tweets={this.props.tweets} />	
+			<TweetList tweets={this.state.collectionTweets} />	
 		);
 		var htmlMarkup={
 			html: htmlString	
@@ -27,26 +44,22 @@ var Collection = React.createClass({
 		return JSON.stringify(htmlMarkup);
 	},
 	render: function(){
-		var numberOfTweetsInCollection= this.getNumberOfTweetsInCollection();
+		var collectionTweets=this.state.collectionTweets;
+		var numberOfTweetsInCollection=CollectionUtils.getNumberOfTweetsInCollection(collectionTweets);
+		var htmlMarkup;
 		
+		//var numberOfTweetsInCollection= this.getNumberOfTweetsInCollection();	
 		if(numberOfTweetsInCollection >0){
-			console.log("it's working");
-		
-			var tweets=this.props.tweets;
+	
 			var htmlMarkup = this.createHtmlMarkupStringOfTweetList();
-			var removeAllTweetsFromCollection= this.props.onRemoveAllTweetsFromCollection;
-			var handleRemoveTweetFromCollection = this.props.onRemoveTweetFromCollection;
-			
+	
 			return(
 				<div>
 					<CollectionControls
 						numberOfTweetsInCollection={numberOfTweetsInCollection}
-						htmlMarkup={htmlMarkup}
-						onRemoveAllTweetsFromCollection={removeAllTweetsFromCollection}/>
+						htmlMarkup={htmlMarkup}/>
 								
-					<TweetList
-						tweets={tweets}
-						onRemoveTweetFromCollection={handleRemoveTweetFromCollection}/>
+					<TweetList tweets={collectionTweets}/>
 				</div>
 			);	
 		}
